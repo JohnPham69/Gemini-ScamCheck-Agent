@@ -1,2 +1,28 @@
-body { font-size: 18px; }
-pre { white-space: pre-wrap; }
+/* Tối ưu hóa cỡ chữ nền tảng cho người lớn tuổi tiếp cận */
+body {
+    font-size: 18px;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+/* Đảm bảo các khối văn bản thô hiển thị xuống dòng an toàn không bị tràn khung */
+pre {
+    white-space: pre-wrap;
+    word-break: break-all;
+}
+
+/* Tùy chỉnh thanh cuộn danh sách lịch sử mượt mà hơn trên giao diện di động */
+#history-list::-webkit-scrollbar {
+    width: 6px;
+}
+#history-list::-webkit-scrollbar-track {
+    background: #f1f5f9;
+    border-radius: 4px;
+}
+#history-list::-webkit-scrollbar-thumb {
+    background: #cbd5e1;
+    border-radius: 4px;
+}
+#history-list::-webkit-scrollbar-thumb:hover {
+    background: #94a3b8;
+}
