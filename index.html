@@ -1,31 +1,95 @@
 <!DOCTYPE html>
 <html lang="vi">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>ScamCheck</title>
-<script src="https://cdn.tailwindcss.com"></script>
-<link rel="stylesheet" href="style.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ScamCheck - Công cụ kiểm tra tin nhắn lừa đảo</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="style.css">
 </head>
-<body class="bg-gray-100 p-6">
-<h1 class="text-4xl font-bold">ScamCheck</h1>
-<textarea id="message" class="w-full p-4 mt-4" rows="8" placeholder="Dán tin nhắn nghi ngờ..."></textarea>
-<button onclick="analyzeMessage()" class="bg-blue-600 text-white px-6 py-3 mt-4 rounded">Kiểm tra</button>
-<div id="result" class="mt-6"></div>
+<body class="bg-slate-50 text-slate-900 min-h-screen flex flex-col justify-between p-4 md:p-8">
 
-<div class="mt-10">
-    <h2 class="text-2xl font-bold mb-4">
-        📜 Lịch sử kiểm tra
-    </h2>
+    <main class="max-w-2xl mx-auto w-full bg-white rounded-2xl shadow-xl p-6 border border-slate-100">
+        <h1 class="text-4xl font-extrabold text-blue-700 tracking-tight text-center mb-2">ScamCheck</h1>
+        <p class="text-slate-600 text-center mb-6 text-lg font-medium">🕵️‍♂️ Thám tử kỹ thuật & 🧠 Cô tâm lý đồng hành bảo vệ gia đình</p>
 
-    <div id="history"></div>
-</div>
+        <div class="mb-4">
+            <span class="block text-sm font-semibold text-slate-500 mb-2">Thử nhanh bằng tin mẫu:</span>
+            <div class="flex flex-col gap-2 sm:flex-row">
+                <button onclick="fillSample(1)" class="text-left bg-slate-100 hover:bg-slate-200 p-2 rounded-lg text-sm transition font-medium text-slate-700">🏦 Giả mạo Ngân hàng</button>
+                <button onclick="fillSample(2)" class="text-left bg-slate-100 hover:bg-slate-200 p-2 rounded-lg text-sm transition font-medium text-slate-700">👮 Giả mạo Công an</button>
+                <button onclick="fillSample(3)" class="text-left bg-slate-100 hover:bg-slate-200 p-2 rounded-lg text-sm transition font-medium text-slate-700">🎁 Trúng thưởng giả</button>
+            </div>
+        </div>
 
-<footer class="mt-10 text-sm">
-ScamCheck là công cụ giáo dục do nhóm học viên phát triển. Kết quả không thay thế cảnh báo chính thức từ ngân hàng hoặc cơ quan chức năng.
-</footer>
+        <div class="space-y-4">
+            <textarea id="message" 
+                class="w-full p-4 border-2 border-slate-300 rounded-xl focus:border-blue-500 focus:outline-none bg-slate-50 text-lg transition shadow-inner" 
+                rows="6" 
+                placeholder="Dán hoặc gõ nội dung tin nhắn nghi ngờ vào đây..."></textarea>
+            
+            <button onclick="analyzeMessage()" 
+                class="w-full bg-blue-600 hover:bg-blue-700 active:scale-[0.99] text-white font-bold py-4 px-6 rounded-xl text-xl shadow-md shadow-blue-200 transition duration-150">
+                🔍 Kiểm tra ngay
+            </button>
+        </div>
 
-<script src="config.js"></script>
-<script src="script.js"></script>
+        <div id="result" class="mt-6 hidden space-y-4">
+            <div id="risk-card" class="border-2 p-4 rounded-xl text-center shadow-sm transition-all">
+                <span class="text-sm font-bold uppercase tracking-wider block opacity-75">Mức độ rủi ro</span>
+                <span id="risk-status" class="text-3xl font-black">Nghi ngờ</span>
+            </div>
+
+            <div class="bg-slate-100 p-4 rounded-xl border border-slate-200">
+                <h4 class="text-sm font-bold text-slate-500 mb-2">Nội dung tin nhắn gốc:</h4>
+                <p id="original-text" class="text-lg whitespace-pre-wrap leading-relaxed text-slate-800"></p>
+            </div>
+
+            <div class="bg-white p-5 rounded-xl border border-slate-200 shadow-sm space-y-3">
+                <div class="flex items-center space-x-2 border-b border-slate-100 pb-2">
+                    <span class="text-2xl">🕵️‍♂️</span>
+                    <h3 class="text-xl font-bold text-slate-800">Hồ sơ Thám tử kỹ thuật</h3>
+                </div>
+                <div id="detector-section">
+                    <h4 class="text-base font-bold text-red-600 mb-1">🔎 Dấu hiệu kỹ thuật phát hiện:</h4>
+                    <ul id="indicators-list" class="list-disc pl-5 space-y-1 text-base text-slate-700"></ul>
+                </div>
+                <div class="bg-blue-50 p-3 rounded-lg border border-blue-100">
+                    <h4 class="text-base font-bold text-blue-900 mb-1">🛠️ Hành động ứng phó khuyên dùng:</h4>
+                    <ul id="actions-list" class="list-decimal pl-5 space-y-1 text-base text-blue-950 font-medium"></ul>
+                </div>
+            </div>
+
+            <div class="bg-purple-50 p-5 rounded-xl border border-purple-200 shadow-sm space-y-3">
+                <div class="flex items-center space-x-2 border-b border-purple-100 pb-2">
+                    <span class="text-2xl">🧠</span>
+                    <h3 class="text-xl font-bold text-purple-900">Góc bình an từ Cô Tâm Lý</h3>
+                </div>
+                <div>
+                    <h4 class="text-base font-bold text-purple-950">🎯 Đòn bẫy thao túng tâm lý chúng đang dùng:</h4>
+                    <p id="psychology-manipulation" class="text-base text-purple-900 mt-1 leading-relaxed"></p>
+                </div>
+                <div class="bg-white p-4 rounded-xl border border-purple-100 text-purple-950 text-base md:text-lg leading-relaxed shadow-sm font-medium">
+                    💬 <span id="psychology-advice" class="italic"></span>
+                </div>
+            </div>
+        </div>
+
+        <div class="mt-8 pt-6 border-t border-slate-200">
+            <h3 class="text-lg font-bold text-slate-700 mb-3 flex items-center gap-2">
+                ⏳ Lịch sử kiểm tra gần đây
+            </h3>
+            <div id="history-list" class="space-y-2 text-sm max-h-48 overflow-y-auto">
+                <p class="text-slate-400 italic">Chưa có dữ liệu kiểm tra.</p>
+            </div>
+        </div>
+    </main>
+
+    <footer class="max-w-2xl mx-auto w-full mt-8 text-center text-slate-500 text-sm border-t border-slate-200 pt-4 px-4 leading-relaxed">
+        <strong>Lưu ý pháp lý:</strong> ScamCheck là công cụ giáo dục do nhóm học viên phát triển và đánh giá của ứng dụng không thay thế cảnh báo chính thức từ ngân hàng hoặc cơ quan chức năng. Khi nghi ngờ, người dùng nên gọi tổng đài chính thức của ngân hàng được in trên thẻ.
+    </footer>
+
+    <script src="config.js"></script>
+    <script src="script.js"></script>
 </body>
 </html>
