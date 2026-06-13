@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ScamCheck</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link rel="stylesheet" href="style.css">
+</head>
+<body class="bg-gray-100 p-6">
+<h1 class="text-4xl font-bold">ScamCheck</h1>
+<textarea id="message" class="w-full p-4 mt-4" rows="8" placeholder="Dán tin nhắn nghi ngờ..."></textarea>
+<button onclick="analyzeMessage()" class="bg-blue-600 text-white px-6 py-3 mt-4 rounded">Kiểm tra</button>
+<div id="result" class="mt-6"></div>
+
+<div class="mt-10">
+    <h2 class="text-2xl font-bold mb-4">
+        📜 Lịch sử kiểm tra
+    </h2>
+
+    <div id="history"></div>
+</div>
+
+<footer class="mt-10 text-sm">
+ScamCheck là công cụ giáo dục do nhóm học viên phát triển. Kết quả không thay thế cảnh báo chính thức từ ngân hàng hoặc cơ quan chức năng.
+</footer>
+
+<script src="config.js"></script>
+<script src="script.js"></script>
+</body>
+</html>
