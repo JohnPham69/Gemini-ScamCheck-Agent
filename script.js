@@ -16,8 +16,7 @@ document.addEventListener("DOMContentLoaded", renderHistory);
 // ==========================================
 // CONFIGURATION: Thay đổi địa chỉ này khi deploy lên Render/Cloud
 // ==========================================
-const BACKEND_URL = 'http://127.0.0.1:5000/api/chat'; 
-
+const BACKEND_URL = 'https://ten-app-cua-ban.onrender.com/api/chat';
 // ==========================================
 // 2. HÀM XỬ LÝ CHÍNH: PHÂN TÍCH TIN NHẮN
 // ==========================================
