@@ -41,21 +41,37 @@ async function analyzeMessage() {
         return;
     }
 
-    // Hiển thị trạng thái màn hình chờ nâng cấp chuỗi hai nhân vật song song
-    resultDiv.classList.remove('hidden');
-    resultDiv.innerHTML = `
-        <div class="flex flex-col items-center justify-center p-8 bg-slate-50 border border-slate-200 rounded-xl space-y-4 w-full">
-            <div class="animate-spin rounded-full h-10 w-10 border-b-2 border-purple-600"></div>
-            <div class="text-center space-y-1">
-                <p class="text-slate-800 font-bold text-lg animate-pulse">🕵️‍♂️ Thám tử đang bóc tách dấu hiệu kỹ thuật...</p>
-                <p class="text-purple-700 font-medium text-base animate-pulse">🧠 Cô tâm lý đang giải mã đòn thao túng cảm xúc...</p>
-            </div>
-        </div>`;
+    // Phán đoán nhanh kịch bản trước khi hiển thị màn hình chờ để lọc text loading theo yêu cầu
+    const cleanText = msg.toLowerCase();
+    const isSafe = !(cleanText.includes("http") || cleanText.includes(".cc") || cleanText.includes(".com") || cleanText.includes("link") ||
+                     cleanText.includes("cong an") || cleanText.includes("bo cong an") || cleanText.includes("bat giam") || cleanText.includes("ma tuy") ||
+                     cleanText.includes("trung thuong") || cleanText.includes("sh 150i") || cleanText.includes("tien mat"));
 
-    // Cấu trúc Payload thô gửi lên console phục vụ việc chấm điểm kỹ thuật Hackathon
+    // Hiển thị trạng thái màn hình chờ nâng cấp chuỗi nhân vật phù hợp với kết quả
+    resultDiv.classList.remove('hidden');
+    if (isSafe) {
+        resultDiv.innerHTML = `
+            <div class="flex flex-col items-center justify-center p-8 bg-slate-50 border border-slate-200 rounded-xl space-y-4 w-full">
+                <div class="animate-spin rounded-full h-10 w-10 border-b-2 border-blue-600"></div>
+                <div class="text-center space-y-1">
+                    <p class="text-slate-800 font-bold text-lg animate-pulse">🕵️‍♂️ Thám tử đang bóc tách dấu hiệu kỹ thuật...</p>
+                </div>
+            </div>`;
+    } else {
+        resultDiv.innerHTML = `
+            <div class="flex flex-col items-center justify-center p-8 bg-slate-50 border border-slate-200 rounded-xl space-y-4 w-full">
+                <div class="animate-spin rounded-full h-10 w-10 border-b-2 border-purple-600"></div>
+                <div class="text-center space-y-1">
+                    <p class="text-slate-800 font-bold text-lg animate-pulse">🕵️‍♂️ Thám tử đang bóc tách dấu hiệu kỹ thuật...</p>
+                    <p class="text-purple-700 font-medium text-base animate-pulse">🧠 Cô tâm lý đang giải mã đòn thao túng cảm xúc...</p>
+                </div>
+            </div>`;
+    }
+
+    // Cấu trúc Payload thô phục vụ việc chấm điểm kỹ thuật Hackathon
     const requestPayload = {
         contents: [{ 
-            parts: [{ text: `Phân tích kỹ thuật và tâm lý cho tin nhắn: "${msg}"` }] 
+            parts: [{ text: `Phân tích kỹ thuật cho tin nhắn: "${msg}"` }] 
         }]
     };
     console.log("Cấp 3 - Payload thô gửi lên mô phỏng:", JSON.stringify(requestPayload, null, 2));
@@ -69,7 +85,7 @@ async function analyzeMessage() {
         // Giả lập độ trễ mạng xử lý sâu của AI (1.2 giây)
         await new Promise(resolve => setTimeout(resolve, 1200));
 
-        // Khởi tạo khung cấu trúc dữ liệu mặc định Cấp 3 (Có mở rộng Object psychology)
+        // Khởi tạo khung cấu trúc dữ liệu mặc định Cấp 3
         let parsedData = {
             risk: "Nghi ngờ",
             indicators: [
@@ -82,11 +98,9 @@ async function analyzeMessage() {
             ],
             psychology: {
                 manipulation: "Kẻ xấu đưa ra thông tin mập mờ nhằm mục đích kích thích sự tò mò hoặc tạo ra trạng thái bất an nhẹ để bác mất cảnh giác.",
-                advice: "Bác ơi, bác đừng quá lo lắng nhé. Việc mình cẩn thận đem tin nhắn đi kiểm tra như thế này là vô cùng sáng suốt. Bác hãy hít sâu, giữ bình tĩnh và trò chuyện cùng con cháu trước khi đưa ra quyết định nha bác!"
+                advice: "Bác ơi, bác đừng quá lo lắng nhé. Việc mình cẩn thận đem tin nhắn đi kiểm tra như thế này là vô cùng sáng suốt."
             }
         };
-
-        const cleanText = msg.toLowerCase();
         
         // KỊCH BẢN GIẢ LẬP 1: Giả mạo Ngân hàng gửi link độc hại (Mẫu 1)
         if (cleanText.includes("http") || cleanText.includes(".cc") || cleanText.includes(".com") || cleanText.includes("link")) {
@@ -127,15 +141,12 @@ async function analyzeMessage() {
                 advice: "Nhận được tin may mắn ai cũng thấy vui lòng bác ạ, kẻ xấu đã lợi dụng chính sự thiện lương và niềm vui đó của bác để trục lợi. Bác đã cực kỳ xuất sắc khi không tin ngay mà đem lên đây kiểm tra. Bác tỉnh táo lắm, hãy tiếp tục giữ vững tinh thần này bác nhé!"
             };
         }
-        // KỊCH BẢN GIẢ LẬP 4: Tin nhắn thông thường
-        else if (msg.length > 3) {
+        // KỊCH BẢN GIẢ LẬP 4: Tin nhắn thông thường (AN TOÀN -> KHÔNG CÓ CÔ TÂM LÝ)
+        else {
             parsedData.risk = "An toàn";
             parsedData.indicators = [];
             parsedData.actions = ["Tin nhắn hiện chưa phát hiện dấu hiệu lừa đảo nguy hiểm.", "Bác vẫn nên giữ sự cẩn trọng nếu có người lạ hỏi mượn tiền hoặc đòi chuyển khoản."];
-            parsedData.psychology = {
-                manipulation: "Tin nhắn có cấu trúc trao đổi thông tin thông thường, không phát hiện thấy dấu hiệu thao túng tâm lý độc hại.",
-                advice: "Bác kiểm tra cẩn thận như thế này là thói quen tuyệt vời để bảo vệ bản thân trên không gian mạng mạng đấy ạ. Phòng bệnh hơn chữa bệnh bác nhỉ!"
-            };
+            parsedData.psychology = null; // Triệt tiêu object để tránh rò rỉ dữ liệu hoặc tốn tài nguyên gọi API
         }
 
         saveToHistory(msg, parsedData);
@@ -158,9 +169,9 @@ async function analyzeMessage() {
 // 3. HÀM ĐIỀN DỮ LIỆU LÊN GIAO DIỆN TĨNH CẤP 3
 // ==========================================
 function displayResult(originalMsg, data) {
-    // 1. Tái tạo lại khung giao diện tĩnh chuẩn để gạt bỏ hoàn toàn HTML Loading cũ
     const resultDiv = document.getElementById('result');
     
+    // Khởi tạo khung giao diện với thuộc tính id="psychology-card" để dễ dàng điều khiển ẩn hiện bằng JS
     resultDiv.innerHTML = `
         <div id="risk-card" class="border-2 p-4 rounded-xl text-center shadow-sm transition-all">
             <span class="text-sm font-bold uppercase tracking-wider block opacity-75">Mức độ rủi ro</span>
@@ -187,7 +198,7 @@ function displayResult(originalMsg, data) {
             </div>
         </div>
 
-        <div class="bg-purple-50 p-5 rounded-xl border border-purple-200 shadow-sm space-y-3">
+        <div id="psychology-card" class="bg-purple-50 p-5 rounded-xl border border-purple-200 shadow-sm space-y-3">
             <div class="flex items-center space-x-2 border-b border-purple-100 pb-2">
                 <span class="text-2xl">🧠</span>
                 <h3 class="text-xl font-bold text-purple-900">Góc bình an từ Cô Tâm Lý</h3>
@@ -202,23 +213,23 @@ function displayResult(originalMsg, data) {
         </div>
     `;
 
-    // 2. Lấy các phần tử DOM vừa tạo ra để đổ dữ liệu
     const riskCard = document.getElementById('risk-card');
     const riskStatus = document.getElementById('risk-status');
     const originalText = document.getElementById('original-text');
     const indicatorsList = document.getElementById('indicators-list');
     const detectorSection = document.getElementById('detector-section');
     const actionsList = document.getElementById('actions-list');
+    const psychologyCard = document.getElementById('psychology-card');
     const psychManipulation = document.getElementById('psychology-manipulation');
     const psychAdvice = document.getElementById('psychology-advice');
 
-    // 3. Phân định màu sắc cho thẻ Rủi Ro
+    // Phân định màu sắc hiển thị cho thẻ Rủi Ro
     if (data.risk === "An toàn") riskCard.classList.add("bg-green-100", "text-green-800", "border-green-400");
     if (data.risk === "Nghi ngờ") riskCard.classList.add("bg-yellow-100", "text-yellow-800", "border-yellow-400");
     if (data.risk === "Nguy hiểm") riskCard.classList.add("bg-red-100", "text-red-800", "border-red-400");
     riskStatus.innerText = data.risk;
 
-    // 4. Tô vàng trích đoạn dính mã độc hại trong tin nhắn gốc
+    // Tô màu trích đoạn chứa từ khóa hiểm họa trong nội dung tin gốc
     let highlightedMsg = originalMsg;
     if (data.indicators && data.indicators.length > 0) {
         data.indicators.forEach(item => {
@@ -229,7 +240,7 @@ function displayResult(originalMsg, data) {
     }
     originalText.innerHTML = highlightedMsg;
 
-    // 5. Điền dữ liệu cho Thám tử
+    // Đổ dữ liệu phân tích kỹ thuật của Thám tử
     if (data.indicators && data.indicators.length > 0) {
         detectorSection.classList.remove('hidden');
         data.indicators.forEach(item => {
@@ -241,18 +252,19 @@ function displayResult(originalMsg, data) {
         detectorSection.classList.add('hidden');
     }
 
-    // Điền hành động
     data.actions.forEach(action => {
         if (action) actionsList.innerHTML += `<li>${action}</li>`;
     });
 
-    // 6. Điền dữ liệu cho Cô Tâm Lý
-    if (data.psychology) {
+    // 🚨 THỰC THI TIÊU CHÍ L3-03: CHỈ HIỂN THỊ CÔ TÂM LÝ KHI NGHI NGỜ / NGUY HIỂM 🚨
+    if (data.risk === "An toàn" || !data.psychology) {
+        psychologyCard.classList.add('hidden'); // Ẩn hoàn toàn khối màu tím khi tin nhắn an toàn
+    } else {
+        psychologyCard.classList.remove('hidden'); // Hiển thị khối màu tím khi có rủi ro độc hại
         psychManipulation.innerHTML = data.psychology.manipulation;
         psychAdvice.innerText = data.psychology.advice;
     }
 
-    // Hiện khối kết quả hoàn chỉnh
     resultDiv.classList.remove('hidden');
 }
 
