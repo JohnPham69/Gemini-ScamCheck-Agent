@@ -186,7 +186,7 @@ function displayResult(originalMsg, data) {
         <div class="bg-white p-5 rounded-xl border border-slate-200 shadow-sm space-y-3">
             <div class="flex items-center space-x-2 border-b border-slate-100 pb-2">
                 <span class="text-2xl">🕵️‍♂️</span>
-                <h3 class="text-xl font-bold text-slate-800">Hồ sơ Thám tử kỹ thuật</h3>
+                <h3 class="text-xl font-bold text-slate-800">Thám tử</h3>
             </div>
             <div id="detector-section">
                 <h4 class="text-base font-bold text-red-600 mb-1">🔎 Dấu hiệu kỹ thuật phát hiện:</h4>
@@ -201,7 +201,7 @@ function displayResult(originalMsg, data) {
         <div id="psychology-card" class="bg-purple-50 p-5 rounded-xl border border-purple-200 shadow-sm space-y-3">
             <div class="flex items-center space-x-2 border-b border-purple-100 pb-2">
                 <span class="text-2xl">🧠</span>
-                <h3 class="text-xl font-bold text-purple-900">Góc bình an từ Cô Tâm Lý</h3>
+                <h3 class="text-xl font-bold text-purple-900">Cô Tâm Lý</h3>
             </div>
             <div>
                 <h4 class="text-base font-bold text-purple-950">🎯 Đòn bẫy thao túng tâm lý chúng đang dùng:</h4>
@@ -256,7 +256,7 @@ function displayResult(originalMsg, data) {
         if (action) actionsList.innerHTML += `<li>${action}</li>`;
     });
 
-    // 🚨 THỰC THI TIÊU CHÍ L3-03: CHỈ HIỂN THỊ CÔ TÂM LÝ KHI NGHI NGỜ / NGUY HIỂM 🚨
+    // 🚨 THỰC THI TIÊU CHÍ L3-03: CHỈ HIỂN THỊ CÔ TÂM LÝ KHI NGHI NGỜ / NGUY HIỂM 
     if (data.risk === "An toàn" || !data.psychology) {
         psychologyCard.classList.add('hidden'); // Ẩn hoàn toàn khối màu tím khi tin nhắn an toàn
     } else {
