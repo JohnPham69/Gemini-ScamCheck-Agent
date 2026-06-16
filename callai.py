@@ -1,8 +1,15 @@
+from flask import Flask, request, jsonify
+from flask_cors import CORS
 from google import genai
 from google.genai import types
+import os
 
+app = Flask(__name__)
+# CORS ensures your HTML frontend can communicate with this backend smoothly
+CORS(app)
 
-def generate(content_to_analyze: str):
+def analyze_content(content_to_analyze: str) -> str:
+    # Initializing client with your team's test API key
     client = genai.Client(
         api_key="AQ.Ab8RN6I1MgU_t8e1AW6QsuBz0BdFnsa5zyv1kZ7a1kT7FfJg6Q"
     )
@@ -49,35 +56,39 @@ Content to analyze:
         ],
     )
 
+    # Accumulate stream chunks into a string to send back to the web UI
+    full_response = ""
     for chunk in client.models.generate_content_stream(
         model=model,
         contents=prompt,
         config=config,
     ):
         if chunk.text:
-            print(chunk.text, end="")
+            full_response += chunk.text
+
+    return full_response
 
 
-if __name__ == "__main__":
-    content = f"""CHÚC MỪNG!
+@app.route('/api/chat', methods=['POST'])
+def chat():
+    try:
+        data = request.json
+        user_prompt = data.get('prompt', '')
 
-Số điện thoại của bạn đã được chọn ngẫu nhiên và trúng giải thưởng đặc biệt trị giá 500.000.000 VNĐ cùng 1 chiếc iPhone 17 Pro Max.
+        if not user_prompt:
+            return jsonify({'error': 'No content provided for analysis'}), 400
 
-Để nhận giải, vui lòng liên hệ ngay với nhân viên phụ trách qua Telegram: @NhanThuongVN và chuyển trước 2.500.000 VNĐ phí xác minh hồ sơ.
+        # Run your teammate's custom analysis logic
+        analysis_result = analyze_content(user_prompt)
 
-Lưu ý:  
-- Chỉ còn 60 phút để xác nhận.
-- Nếu quá thời hạn, giải thưởng sẽ bị hủy.
-- Không thông báo cho người khác để tránh mất quyền nhận thưởng.
+        # Return the markdown analysis back to JavaScript
+        return jsonify({'response': analysis_result})
 
-Sau khi chuyển khoản, gửi ảnh biên lai và thông tin cá nhân bao gồm:
-- Họ tên đầy đủ
-- Số CCCD
-- Số tài khoản ngân hàng
-- Mã OTP được gửi đến điện thoại
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
 
-Chúng tôi cam kết hoàn lại phí xác minh cùng với giải thưởng trong vòng 15 phút.
 
-Trân trọng,
-Ban Tổ Chức Chương Trình Tri Ân Khách Hàng 2026 """
-    generate(content)
+if __name__ == '__main__':
+    # Binds to the port provided by hosting environments or defaults to local port 5000
+    port = int(os.environ.get("PORT", 5000))
+    app.run(host='0.0.0.0', port=port, debug=True)
